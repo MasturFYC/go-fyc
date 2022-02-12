@@ -15,7 +15,7 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 )
 
-func GetCategories(w http.ResponseWriter, r *http.Request) {
+func GetSalesmans(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Context-Type", "application/x-www-form-urlencoded")
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
@@ -23,14 +23,14 @@ func GetCategories(w http.ResponseWriter, r *http.Request) {
 
 	defer db.Close()
 
-	var categories []models.Category
+	var salesmans []models.Salesman
 
-	db.Find(&categories)
+	db.Find(&salesmans)
 
-	json.NewEncoder(w).Encode(&categories)
+	json.NewEncoder(w).Encode(&salesmans)
 }
 
-func GetCategory(w http.ResponseWriter, r *http.Request) {
+func GetSalesman(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Context-Type", "application/x-www-form-urlencoded")
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
@@ -41,20 +41,20 @@ func GetCategory(w http.ResponseWriter, r *http.Request) {
 
 	params := mux.Vars(r)
 
-	var category models.Category
+	var sales models.Salesman
 
-	var products []models.Product
+	var orders []models.Order
 
-	db.First(&category, params["id"])
+	db.First(&sales, params["id"])
 
-	db.Model(&category).Related(&products)
+	db.Model(&sales).Related(&orders)
 
-	category.Products = products
+	sales.Orders = orders
 
-	json.NewEncoder(w).Encode(&category)
+	json.NewEncoder(w).Encode(&sales)
 }
 
-func DeleteCategory(w http.ResponseWriter, r *http.Request) {
+func DeleteSalesman(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Context-Type", "application/x-www-form-urlencoded")
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
@@ -67,7 +67,7 @@ func DeleteCategory(w http.ResponseWriter, r *http.Request) {
 
 	defer db.Close()
 
-	var cat models.Category
+	var sales models.Salesman
 
 	id, err := strconv.Atoi(params["id"])
 
@@ -75,16 +75,16 @@ func DeleteCategory(w http.ResponseWriter, r *http.Request) {
 		log.Fatalf("Unable to convert the string into int.  %v", err)
 	}
 
-	db.First(&cat, id)
+	db.First(&sales, id)
 
-	db.Delete(&cat)
+	db.Delete(&sales)
 
 	var msg string
 
 	if db.RowsAffected > 0 {
-		msg = "Category deleted successfully"
+		msg = "Salesman deleted successfully"
 	} else {
-		msg = "Category can not be deleted."
+		msg = "Salesman can not be deleted."
 	}
 
 	res := Response{
@@ -96,36 +96,37 @@ func DeleteCategory(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func CreateCategory(w http.ResponseWriter, r *http.Request) {
+func CreateSalesman(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Context-Type", "application/x-www-form-urlencoded")
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Methods", "POST")
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+
 	// create the postgres db connection
 	db, _ := CreateConnection()
 
 	// close the db connection
 	defer db.Close()
 
-	var cat models.Category
+	var sales models.Salesman
 
-	err := json.NewDecoder(r.Body).Decode(&cat)
+	err := json.NewDecoder(r.Body).Decode(&sales)
 
 	if err != nil {
 		log.Fatalf("Unable to decode the request body.  %v", err)
 	}
 
-	db.Create(&cat) //.Exec(sqlStatement, cat.Name).Scan(&cat)
+	db.Create(&sales)
 
-	log.Printf("Inserted a single record %v", cat.ID)
+	log.Printf("Inserted a single record %v", sales.ID)
 
 	// return the inserted id
-	json.NewEncoder(w).Encode(&cat)
+	json.NewEncoder(w).Encode(&sales)
 }
 
-func UpdateCategory(w http.ResponseWriter, r *http.Request) {
+func UpdateSalesman(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Context-Type", "application/x-www-form-urlencoded")
 	w.Header().Set("Content-Type", "application/json")
@@ -143,7 +144,7 @@ func UpdateCategory(w http.ResponseWriter, r *http.Request) {
 	// close the db connection
 	defer db.Close()
 
-	var cat, body models.Category
+	var sales, body models.Salesman
 
 	err := json.NewDecoder(r.Body).Decode(&body)
 
@@ -152,16 +153,24 @@ func UpdateCategory(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// get category first
-	db.First(&cat, id)
+	db.First(&sales, id)
 
 	// update category
-	updateErr := db.Model(&cat).Updates(models.Category{Name: body.Name}).Error //.Exec(sqlStatement, cat.Name).Scan(&cat)
+	updateErr := db.Model(&sales).Updates(models.Salesman{
+		Name:   body.Name,
+		Street: body.Street,
+		City:   body.City,
+		Phone:  body.Phone,
+		Cell:   body.Cell,
+		Zip:    body.Zip,
+		Email:  body.Email,
+	}).Error //.Exec(sqlStatement, cat.Name).Scan(&cat)
 
 	if updateErr != nil {
 		w.WriteHeader(500)
 		json.NewEncoder(w).Encode(Response{
 			ID:      500,
-			Message: "Duplicate category name",
+			Message: "Duplicate sales name",
 		})
 		return
 		//log.Fatalf("Unable to update category. %v", updateErr)
@@ -170,5 +179,5 @@ func UpdateCategory(w http.ResponseWriter, r *http.Request) {
 	log.Printf("Update a single record %v\n", id)
 
 	// return the inserted id
-	json.NewEncoder(w).Encode(&cat)
+	json.NewEncoder(w).Encode(&sales)
 }
