@@ -14,6 +14,7 @@ import (
 )
 
 func main() {
+
 	mainRouter := mux.NewRouter()
 
 	routers.CategoryRouter(mainRouter.PathPrefix("/categories").Subrouter())

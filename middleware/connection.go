@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"database/sql"
+	"fmt"
 	"net/http"
 	"os"
 	"time"
@@ -51,4 +52,18 @@ func EnableCors(w *http.ResponseWriter) {
 	(*w).Header().Set("Access-Control-Allow-Headers", "Content-Type")
 }
 
-var Sql *sql.DB = createConnection()
+func LoadConnection() func() *sql.DB {
+	db := createConnection()
+
+	fmt.Println("Connecting to database...")
+
+	return func() *sql.DB {
+		err := (*db).Ping()
+		if err != nil {
+			db = createConnection()
+		}
+		return db
+	}
+}
+
+var Sql = LoadConnection()

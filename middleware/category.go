@@ -125,12 +125,12 @@ func UpdateCategory(w http.ResponseWriter, r *http.Request) {
 }
 
 func getAllCategories() ([]models.Category, error) {
-	// defer Sql.Close()
+	// defer Sql().Close()
 	var categories []models.Category
 
 	sqlStatement := `SELECT id, name FROM categories ORDER BY name`
 
-	rows, err := Sql.Query(sqlStatement)
+	rows, err := Sql().Query(sqlStatement)
 
 	if err != nil {
 		log.Fatalf("Unable to execute category query %v", err)
@@ -156,10 +156,10 @@ func getCategory(id *int) (models.Category, error) {
 	var cat models.Category
 
 	sqlStatement := `SELECT c.id, c.name FROM categories c WHERE c.id=$1`
-	//stmt, _ := Sql.Prepare(sqlStatement)
+	//stmt, _ := Sql().Prepare(sqlStatement)
 
 	//defer stmt.Close()
-	row := Sql.QueryRow(sqlStatement, id)
+	row := Sql().QueryRow(sqlStatement, id)
 
 	err := row.Scan(&cat.ID, &cat.Name)
 
@@ -180,7 +180,7 @@ func getCategory(id *int) (models.Category, error) {
 }
 
 func getProductsByCategory(id *int) ([]models.Product, error) {
-	// defer Sql.Close()
+	// defer Sql().Close()
 
 	var products []models.Product
 
@@ -192,7 +192,7 @@ func getProductsByCategory(id *int) ([]models.Product, error) {
 	WHERE p.category_id=$1
 	ORDER BY p.name`
 
-	rows, err := Sql.Query(sqlStatement, id)
+	rows, err := Sql().Query(sqlStatement, id)
 
 	if err != nil {
 		log.Fatalf("Unable to execute product query %v", err)
@@ -233,7 +233,7 @@ func deleteCategory(id *int) int64 {
 	sqlStatement := `DELETE FROM categories WHERE id=$1`
 
 	// execute the sql statement
-	res, err := Sql.Exec(sqlStatement, id)
+	res, err := Sql().Exec(sqlStatement, id)
 
 	if err != nil {
 		log.Fatalf("Unable to delete category. %v", err)
@@ -255,7 +255,7 @@ func createCategory(catName string) int {
 
 	var id int
 
-	err := Sql.QueryRow(sqlStatement, catName).Scan(&id)
+	err := Sql().QueryRow(sqlStatement, catName).Scan(&id)
 
 	if err != nil {
 		log.Fatalf("Unable to create category. %v", err)
@@ -268,7 +268,7 @@ func updateCategory(id *int, cat *models.Category) int64 {
 
 	sqlStatement := `UPDATE categories SET name=$2 WHERE id=$1`
 
-	res, err := Sql.Exec(sqlStatement, id, cat.Name)
+	res, err := Sql().Exec(sqlStatement, id, cat.Name)
 
 	if err != nil {
 		log.Fatalf("Unable to update category. %v", err)

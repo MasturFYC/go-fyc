@@ -24,7 +24,7 @@ func GetProducts(w http.ResponseWriter, r *http.Request) {
 }
 
 func getAllProducts() ([]models.Product, error) {
-	// defer Sql.Close()
+	// defer Sql().Close()
 	var products []models.Product
 
 	sqlStatement := `SELECT
@@ -34,7 +34,7 @@ func getAllProducts() ([]models.Product, error) {
 	FROM products 
 	ORDER BY name`
 
-	rows, err := Sql.Query(sqlStatement)
+	rows, err := Sql().Query(sqlStatement)
 
 	if err != nil {
 		log.Fatalf("Unable to execute product query %v", err)

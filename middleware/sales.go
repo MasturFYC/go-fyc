@@ -139,7 +139,7 @@ func getSales(id *int) (models.Salesman, error) {
 
 	var sqlStatement = `SELECT id, name, street, city, phone, cell, zip, email FROM salesmans WHERE id=$1`
 
-	rs := Sql.QueryRow(sqlStatement, id)
+	rs := Sql().QueryRow(sqlStatement, id)
 
 	err := rs.Scan(&sales.ID, &sales.Name, &sales.Street, &sales.City, &sales.Phone, &sales.Cell, &sales.Zip, &sales.Email)
 
@@ -163,7 +163,7 @@ func getAllSales() ([]models.Salesman, error) {
 
 	var sqlStatement = `SELECT id, name, street, city, phone, cell, zip, email FROM salesmans ORDER BY name`
 
-	rs, err := Sql.Query(sqlStatement)
+	rs, err := Sql().Query(sqlStatement)
 
 	if err != nil {
 		log.Fatalf("Unable to execute sales query %v", err)
@@ -191,7 +191,7 @@ func deleteSales(id *int) int64 {
 	sqlStatement := `DELETE FROM salesmans WHERE id=$1`
 
 	// execute the sql statement
-	res, err := Sql.Exec(sqlStatement, id)
+	res, err := Sql().Exec(sqlStatement, id)
 
 	if err != nil {
 		log.Fatalf("Unable to delete sales. %v", err)
@@ -217,7 +217,7 @@ func createSales(sales *models.Salesman) (int, error) {
 
 	var id int
 
-	err := Sql.QueryRow(sqlStatement,
+	err := Sql().QueryRow(sqlStatement,
 		sales.Name,
 		sales.Street,
 		sales.City,
@@ -240,7 +240,7 @@ func updateSales(id *int, sales *models.Salesman) int64 {
 	name=$2, street=$3, city=$4, phone=$5, cell=$6, zip=$7, email=$8
 	WHERE id=$1`
 
-	res, err := Sql.Exec(sqlStatement,
+	res, err := Sql().Exec(sqlStatement,
 		id,
 		sales.Name,
 		sales.Street,
