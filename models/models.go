@@ -1,6 +1,31 @@
 package models
 
-import "time"
+import (
+	"database/sql/driver"
+	"errors"
+	"time"
+)
+
+type NullString string
+
+func (s *NullString) Scan(value interface{}) error {
+	if value == nil {
+		*s = ""
+		return nil
+	}
+	strVal, ok := value.(string)
+	if !ok {
+		return errors.New("Column is not a string")
+	}
+	*s = NullString(strVal)
+	return nil
+}
+func (s NullString) Value() (driver.Value, error) {
+	if len(s) == 0 { // if nil or empty string
+		return nil, nil
+	}
+	return string(s), nil
+}
 
 type Category struct {
 	ID       int       `json:"id"`
@@ -9,18 +34,18 @@ type Category struct {
 }
 
 type Product struct {
-	ID         int64   `json:"id"`
-	Name       string  `json:"name"`
-	Spec       string  `json:"spec"`
-	BaseUnit   string  `json:"baseUnit"`
-	BaseWeight float32 `json:"baseWeight"`
-	BasePrice  float64 `json:"basePrice"`
-	FirstStock float32 `json:"firstStock"`
-	Stock      float32 `json:"stock"`
-	IsActive   bool    `json:"isActive"`
-	IsSale     bool    `json:"isSale"`
-	CategoryID int     `json:"categoryId"`
-	Units      []Unit  `json:"units,omitempty"`
+	ID         int64      `json:"id"`
+	Name       string     `json:"name"`
+	Spec       NullString `json:"spec"`
+	BaseUnit   string     `json:"baseUnit"`
+	BaseWeight float32    `json:"baseWeight"`
+	BasePrice  float64    `json:"basePrice"`
+	FirstStock float32    `json:"firstStock"`
+	Stock      float32    `json:"stock"`
+	IsActive   bool       `json:"isActive"`
+	IsSale     bool       `json:"isSale"`
+	CategoryID int        `json:"categoryId"`
+	Units      []Unit     `json:"units,omitempty"`
 }
 
 type Unit struct {
@@ -36,15 +61,15 @@ type Unit struct {
 }
 
 type Customer struct {
-	ID     int     `json:"id"`
-	Name   string  `json:"name"`
-	Street string  `json:"street"`
-	City   string  `json:"city"`
-	Phone  string  `json:"phone"`
-	Cell   string  `json:"cell"`
-	Zip    string  `json:"zip"`
-	Email  string  `json:"email"`
-	Orders []Order `json:"orders,omitempty"`
+	ID     int        `json:"id"`
+	Name   string     `json:"name"`
+	Street string     `json:"street"`
+	City   string     `json:"city"`
+	Phone  string     `json:"phone"`
+	Cell   NullString `json:"cell"`
+	Zip    NullString `json:"zip"`
+	Email  NullString `json:"email"`
+	Orders []Order    `json:"orders,omitempty"`
 }
 
 type Facturer struct {
@@ -60,15 +85,15 @@ type Facturer struct {
 }
 
 type Salesman struct {
-	ID     int     `json:"id"`
-	Name   string  `json:"name"`
-	Street string  `json:"street"`
-	City   string  `json:"city"`
-	Phone  string  `json:"phone"`
-	Cell   string  `json:"cell"`
-	Zip    string  `json:"zip"`
-	Email  string  `json:"email"`
-	Orders []Order `json:"orders,omitempty"`
+	ID     int        `json:"id"`
+	Name   string     `json:"name"`
+	Street string     `json:"street"`
+	City   string     `json:"city"`
+	Phone  string     `json:"phone"`
+	Cell   NullString `json:"cell"`
+	Zip    NullString `json:"zip"`
+	Email  NullString `json:"email"`
+	Orders []Order    `json:"orders,omitempty"`
 }
 
 type Order struct {
@@ -81,7 +106,7 @@ type Order struct {
 	UpdatedAt     time.Time     `json:"updatedAt"`
 	CustomerID    int           `json:"customerId"`
 	SalesID       int           `json:"salesId"`
-	OrderDetails  []OrderDetail `json:"details,omitempty"`
+	Details       []OrderDetail `json:"details,omitempty"`
 }
 
 type OrderDetail struct {
