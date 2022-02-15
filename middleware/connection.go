@@ -46,10 +46,10 @@ func createConnection() *sql.DB {
 }
 
 func EnableCors(w *http.ResponseWriter) {
-	(*w).Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
-	(*w).Header().Set("Context-Type", "application/x-www-form-urlencoded")
+	//	(*w).Header().Set("Access-Control-Allow-Origin", "http://pixel.id:8080")
+	//(*w).Header().Set("Context-Type", "application/x-www-form-urlencoded")
 	(*w).Header().Set("Content-Type", "application/json")
-	(*w).Header().Set("Access-Control-Allow-Headers", "Content-Type")
+	//(*w).Header().Set("Access-Control-Allow-Headers", "Content-Type")
 }
 
 func LoadConnection() func() *sql.DB {
@@ -64,6 +64,13 @@ func LoadConnection() func() *sql.DB {
 		}
 		return db
 	}
+}
+
+func CombineString(a string, b string) string {
+	if len(b) == 0 {
+		return a
+	}
+	return a + ", " + b
 }
 
 var Sql = LoadConnection()

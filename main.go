@@ -15,13 +15,22 @@ import (
 
 func main() {
 
+	cor := cors.New(cors.Options{
+		AllowedOrigins: []string{"http://localhost:8080", "http://pixel.id:8080", "http://192.168.100.2:8081", "http://pixel.id:8081"},
+		AllowedMethods: []string{"POST", "GET", "OPTIONS", "PUT", "DELETE"},
+		AllowedHeaders: []string{"Accept", "Accept-Language", "Content-Type"},
+		//AllowCredentials: true,
+		//Debug: true,
+	})
+
 	mainRouter := mux.NewRouter()
 
-	routers.CategoryRouter(mainRouter.PathPrefix("/categories").Subrouter())
-	routers.ProductRouter(mainRouter.PathPrefix("/products").Subrouter())
-	routers.SalesRouter(mainRouter.PathPrefix("/sales").Subrouter())
+	routers.CategoryRouter(mainRouter.PathPrefix("/api/categories").Subrouter())
+	routers.ProductRouter(mainRouter.PathPrefix("/api/products").Subrouter())
+	routers.SalesRouter(mainRouter.PathPrefix("/api/sales").Subrouter())
+	routers.PropertyRouter(mainRouter.PathPrefix("/api/properties").Subrouter())
 
-	handler := cors.Default().Handler(mainRouter)
+	handler := cor.Handler(mainRouter)
 
 	fmt.Println("web server run at local: http://localhost:8080/")
 	fmt.Println("web server run at: http://pixel.id:8080/")

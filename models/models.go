@@ -20,6 +20,7 @@ func (s *NullString) Scan(value interface{}) error {
 	*s = NullString(strVal)
 	return nil
 }
+
 func (s NullString) Value() (driver.Value, error) {
 	if len(s) == 0 { // if nil or empty string
 		return nil, nil
@@ -96,6 +97,19 @@ type Salesman struct {
 	Orders []Order    `json:"orders,omitempty"`
 }
 
+type Supplier struct {
+	ID        int        `json:"id"`
+	Name      string     `json:"name"`
+	SalesName string     `json:"salesName"`
+	Street    string     `json:"street"`
+	City      string     `json:"city"`
+	Phone     string     `json:"phone"`
+	Cell      NullString `json:"cell"`
+	Zip       NullString `json:"zip"`
+	Email     NullString `json:"email"`
+	// Orders    []Order    `json:"orders,omitempty"`
+}
+
 type Order struct {
 	ID            int64         `json:"id"`
 	Total         float64       `json:"total"`
@@ -122,4 +136,9 @@ type OrderDetail struct {
 	OrderID   int64   `json:"orderId"`
 	ProductID int64   `json:"productId"`
 	UnitID    int64   `json:"unitId"`
+}
+
+type Property struct {
+	ID   int64  `json:"id"`
+	Name string `json:"string"`
 }
