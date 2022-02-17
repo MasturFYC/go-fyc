@@ -16,7 +16,11 @@ import (
 func main() {
 
 	cor := cors.New(cors.Options{
-		AllowedOrigins: []string{"http://localhost:8080", "http://pixel.id:8080", "http://192.168.100.2:8081", "http://pixel.id:8081"},
+		AllowedOrigins: []string{
+			"http://localhost:8081",
+			"http://localhost:8080",
+			"http://192.168.100.2:8081",
+			"http://pixel.id:8081"},
 		AllowedMethods: []string{"POST", "GET", "OPTIONS", "PUT", "DELETE"},
 		AllowedHeaders: []string{"Accept", "Accept-Language", "Content-Type"},
 		//AllowCredentials: true,
@@ -25,10 +29,11 @@ func main() {
 
 	mainRouter := mux.NewRouter()
 
-	routers.CategoryRouter(mainRouter.PathPrefix("/api/categories").Subrouter())
-	routers.ProductRouter(mainRouter.PathPrefix("/api/products").Subrouter())
-	routers.SalesRouter(mainRouter.PathPrefix("/api/sales").Subrouter())
-	routers.PropertyRouter(mainRouter.PathPrefix("/api/properties").Subrouter())
+	routers.CategoryRouter(mainRouter.PathPrefix("/categories").Subrouter())
+	routers.ProductRouter(mainRouter.PathPrefix("/products").Subrouter())
+	routers.SalesRouter(mainRouter.PathPrefix("/salesmans").Subrouter())
+	routers.PropertyRouter(mainRouter.PathPrefix("/properties").Subrouter())
+	routers.CustomerRouter(mainRouter.PathPrefix("/customers").Subrouter())
 
 	handler := cor.Handler(mainRouter)
 
