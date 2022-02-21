@@ -135,26 +135,26 @@ func UpdateCustomer(w http.ResponseWriter, r *http.Request) {
 
 func getCustomer(id *int) (models.Customer, error) {
 
-	var customers models.Customer
+	var cust models.Customer
 
 	var sqlStatement = `SELECT id, name, street, city, phone, cell, zip, email FROM customers WHERE id=$1`
 
 	rs := Sql().QueryRow(sqlStatement, id)
 
-	err := rs.Scan(&customers.ID, &customers.Name, &customers.Street, &customers.City, &customers.Phone, &customers.Cell, &customers.Zip, &customers.Email)
+	err := rs.Scan(&cust.ID, &cust.Name, &cust.Street, &cust.City, &cust.Phone, &cust.Cell, &cust.Zip, &cust.Email)
 
 	switch err {
 	case sql.ErrNoRows:
 		fmt.Println("No rows were returned!")
-		return customers, nil
+		return cust, nil
 	case nil:
-		return customers, nil
+		return cust, nil
 	default:
 		log.Fatalf("Unable to scan the row. %v", err)
 	}
 
 	// return empty user on error
-	return customers, err
+	return cust, err
 }
 
 func getAllCustomer() ([]models.Customer, error) {
@@ -172,15 +172,15 @@ func getAllCustomer() ([]models.Customer, error) {
 	defer rs.Close()
 
 	for rs.Next() {
-		var s models.Customer
+		var cust models.Customer
 
-		err := rs.Scan(&s.ID, &s.Name, &s.Street, &s.City, &s.Phone, &s.Cell, &s.Zip, &s.Email)
+		err := rs.Scan(&cust.ID, &cust.Name, &cust.Street, &cust.City, &cust.Phone, &cust.Cell, &cust.Zip, &cust.Email)
 
 		if err != nil {
 			log.Fatalf("Unable to scan the row. %v", err)
 		}
 
-		customers = append(customers, s)
+		customers = append(customers, cust)
 	}
 
 	return customers, err

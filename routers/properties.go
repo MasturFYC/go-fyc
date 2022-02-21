@@ -8,7 +8,7 @@ import (
 
 func PropertyRouter(router *mux.Router) {
 
-	router.HandleFunc("/product", properties.GetProductsProps).Methods("GET")
-	router.HandleFunc("/category", properties.GetCategoryProps).Methods("GET")
+	router.HandleFunc("/product/", properties.GetProductsProps).Methods("GET")
+	router.HandleFunc("/category/", properties.GetCategoryProps).Methods("GET")
 
 }

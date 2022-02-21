@@ -34,8 +34,6 @@ func GetProductsByCategory(w http.ResponseWriter, r *http.Request) {
 
 	id, err := strconv.Atoi(params["id"])
 
-	fmt.Printf("test: %v\n", id)
-
 	if err != nil {
 		log.Fatalf("Unable to convert the string into int.  %v", err)
 	}
